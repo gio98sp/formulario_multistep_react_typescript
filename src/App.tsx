@@ -8,9 +8,36 @@ import { Thanks } from './components/Thanks';
 import { Steps } from './components/Steps';
 
 import './App.css';
+import { useState } from 'react';
+
+type FormFields = {
+  name: string;
+  email: string;
+  review: string;
+  comment: string;
+};
+
+const formTemplate: FormFields = {
+  name: '',
+  email: '',
+  review: '',
+  comment: '',
+};
 
 export const App = () => {
-  const formComponents = [<UseForm />, <ReviewForm />, <Thanks />];
+  const [data, setData] = useState(formTemplate);
+
+  const updateFieldHandler = (key: string, value: string) => {
+    setData((prev) => {
+      return { ...prev, [key]: value };
+    });
+  };
+
+  const formComponents = [
+    <UseForm data={data} updateFieldHandler={updateFieldHandler} />,
+    <ReviewForm />,
+    <Thanks />,
+  ];
 
   const { currentStep, currentComponent, changeSteps } = useForm(formComponents);
 
@@ -27,25 +54,21 @@ export const App = () => {
         <Steps currentStep={currentStep} />
 
         <form onSubmit={(e) => changeSteps(currentStep + 1, e)}>
-          <div className="inputs-container">
-            {currentComponent}
-          </div>
+          <div className="inputs-container">{currentComponent}</div>
 
           <div className="actions">
-            <button type='button' onClick={() => changeSteps(currentStep - 1)}>
+            <button type="button" onClick={() => changeSteps(currentStep - 1)}>
               <GrFormPrevious />
               <span>Voltar</span>
             </button>
 
-            <button type='submit'>
+            <button type="submit">
               <span>Avançar</span>
               <GrFormNext />
             </button>
-
           </div>
         </form>
       </div>
-
     </div>
   );
 };
